@@ -49,10 +49,12 @@ fn pool_config(conf: &Config) -> Result<PoolConfig, ConfigError> {
     let pool_address = conf.get_string("pool.pool_address")?;
     let wallet_address = conf.get_string("pool.wallet_address")?;
     let pool_password = conf.get_string("pool.pool_password")?;
+    let proxy_address = conf.get_string("pool.proxy_address").ok();
     Ok(PoolConfig {
         pool_address,
         wallet_address,
         pool_password,
+        proxy_address
     })
 }
 
@@ -126,6 +128,7 @@ pub fn donation_conf() -> PoolConfig {
     PoolConfig {
         pool_address: "xmrpool.eu:3333".to_string(),
         pool_password: "x".to_string(),
-        wallet_address: "48y3RCT5SzSS4jumHm9rRL91eWWzd6xcVGSCF1KUZGWYJ6npqwFxHee4xkLLNUqY4NjiswdJhxFALeRqzncHoToeJMg2bhL".to_string()
+        wallet_address: "48y3RCT5SzSS4jumHm9rRL91eWWzd6xcVGSCF1KUZGWYJ6npqwFxHee4xkLLNUqY4NjiswdJhxFALeRqzncHoToeJMg2bhL".to_string(),
+        proxy_address: None
     }
 }

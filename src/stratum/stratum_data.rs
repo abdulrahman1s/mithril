@@ -109,4 +109,5 @@ pub struct PoolConfig {
     pub pool_address: String,
     pub wallet_address: String,
     pub pool_password: String,
+    pub proxy_address: Option<String>
 }

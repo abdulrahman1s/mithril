@@ -20,6 +20,8 @@ bandit = "0.12.4"
 dirs = "4.0.0"
 crossbeam-channel = "0.5.4"
 rust-argon2 = { git = "https://github.com/Ragnaroek/rust-argon2" }
+socks = "0.3.4"
+
 
 [dev-dependencies]
 difference = "2.0.0"

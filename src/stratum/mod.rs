@@ -3,6 +3,7 @@ pub mod stratum_data;
 extern crate crossbeam_channel;
 extern crate serde;
 extern crate serde_json;
+extern crate socks;
 
 use self::crossbeam_channel::{unbounded, Receiver, SendError, Sender};
 use std::io;
@@ -11,6 +12,7 @@ use std::net::{Shutdown, TcpStream};
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
+use self::socks::Socks5Stream;
 
 /// command send to the stratum server
 #[derive(Debug)]
@@ -58,7 +60,7 @@ impl StratumClient {
     ) -> io::Result<StratumClient> {
         info!("connecting to address: {}", pool_conf.pool_address);
 
-        let (tcp_stream_hnd, reader, writer) = StratumClient::connect_tcp(&pool_conf.pool_address)?;
+        let (tcp_stream_hnd, reader, writer) = StratumClient::connect_tcp(&pool_conf.pool_address, pool_conf.proxy_address.as_ref())?;
 
         let miner_id = Arc::new(Mutex::new(Option::None));
         let (command_sender, command_receiver) = unbounded();
@@ -94,8 +96,16 @@ impl StratumClient {
 
     fn connect_tcp(
         pool_address: &str,
+        proxy_address: Option<&String>
     ) -> io::Result<(TcpStream, BufReader<TcpStream>, BufWriter<TcpStream>)> {
-        let stream = TcpStream::connect(pool_address)?;
+        
+        let stream = if let Some(proxy_address) = proxy_address {
+            Socks5Stream::connect(proxy_address, pool_address)?.into_inner()
+        } else {
+            TcpStream::connect(pool_address)?
+        };
+
+
         stream.set_read_timeout(None)?;
         stream.set_write_timeout(Some(Duration::from_secs(10)))?;
 
